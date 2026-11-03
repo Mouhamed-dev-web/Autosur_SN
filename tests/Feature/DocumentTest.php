@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Database\Seeders\RoleSeeder;
+use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -18,6 +19,14 @@ class DocumentTest extends TestCase
         parent::setUp();
         $this->seed(RoleSeeder::class);
         Storage::fake('local');
+    }
+
+    private function disk(): FilesystemAdapter
+    {
+        /** @var FilesystemAdapter $disk */
+        $disk = Storage::disk('local');
+
+        return $disk;
     }
 
     private function client(): User
@@ -47,7 +56,7 @@ class DocumentTest extends TestCase
 
         $doc = $user->documents()->first();
         $this->assertNotNull($doc);
-        Storage::disk('local')->assertExists($doc->path);
+        $this->disk()->assertExists($doc->path);
     }
 
     public function test_format_non_autorise_refuse(): void
@@ -93,7 +102,7 @@ class DocumentTest extends TestCase
         $this->actingAs($a)->get(route('client.documents.download', $doc))->assertForbidden();
         $this->actingAs($a)->delete(route('client.documents.destroy', $doc))->assertForbidden();
 
-        Storage::disk('local')->assertExists($doc->path);
+        $this->disk()->assertExists($doc->path);
     }
 
     public function test_suppression_efface_aussi_le_fichier(): void
@@ -105,6 +114,6 @@ class DocumentTest extends TestCase
         $this->actingAs($user)->delete(route('client.documents.destroy', $doc))->assertRedirect();
 
         $this->assertDatabaseMissing('documents', ['id' => $doc->id]);
-        Storage::disk('local')->assertMissing($doc->path);
+        $this->disk()->assertMissing($doc->path);
     }
 }
