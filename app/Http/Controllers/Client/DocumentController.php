@@ -6,13 +6,23 @@ use App\Enums\DocumentType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Client\DocumentRequest;
 use App\Models\Document;
+use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 
 class DocumentController extends Controller
 {
     private const HEADERS = ['X-Content-Type-Options' => 'nosniff'];
+
+    private function disk(): FilesystemAdapter
+    {
+        /** @var FilesystemAdapter $disk */
+        $disk = Storage::disk(Document::DISK);
+
+        return $disk;
+    }
 
     public function index(Request $request)
     {
@@ -44,9 +54,11 @@ class DocumentController extends Controller
     public function store(DocumentRequest $request)
     {
         $user = $request->user();
+
+        /** @var UploadedFile $file */
         $file = $request->file('file');
 
-        $path = $file->store('documents/' . $user->id, Document::DISK);
+        $path = $file->store('documents/'.$user->id, Document::DISK);
 
         $user->documents()->create([
             'vehicle_id' => $request->validated('vehicle_id'),
@@ -68,10 +80,10 @@ class DocumentController extends Controller
         Gate::authorize('view', $document);
 
         return response()->file(
-            Storage::disk(Document::DISK)->path($document->path),
+            $this->disk()->path($document->path),
             self::HEADERS + [
                 'Content-Type' => $document->mime,
-                'Content-Disposition' => 'inline; filename="' . $document->downloadName() . '"',
+                'Content-Disposition' => 'inline; filename="'.$document->downloadName().'"',
             ]
         );
     }
@@ -80,7 +92,7 @@ class DocumentController extends Controller
     {
         Gate::authorize('view', $document);
 
-        return Storage::disk(Document::DISK)->download($document->path, $document->downloadName(), self::HEADERS);
+        return $this->disk()->download($document->path, $document->downloadName(), self::HEADERS);
     }
 
     public function destroy(Document $document)

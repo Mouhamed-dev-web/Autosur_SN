@@ -10,6 +10,14 @@
     <header class="bg-white shadow-sm">
         <nav class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 p-4">
             <a href="{{ route('client.dashboard') }}" class="text-xl font-bold text-emerald-700">AutoSur.sn</a>
+            @php($unread = auth()->user()->unreadNotifications()->count())
+<a href="{{ route('client.alerts.index') }}"
+   class="{{ request()->routeIs('client.alerts.*') ? 'font-semibold text-emerald-700' : 'hover:text-emerald-700' }}">
+    Alertes
+    @if ($unread > 0)
+        <span class="ml-1 rounded-full bg-red-600 px-1.5 py-0.5 text-xs text-white">{{ $unread }}</span>
+    @endif
+</a>
 
             <div class="flex flex-wrap items-center gap-4 text-sm">
                 <a href="{{ route('client.dashboard') }}"

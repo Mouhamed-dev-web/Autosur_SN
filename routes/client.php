@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Client\NotificationController;
 use App\Http\Controllers\Client\DashboardController;
 use App\Http\Controllers\Client\DocumentController;
 use App\Http\Controllers\Client\ProfileController;
@@ -21,3 +22,7 @@ Route::post('documents', [DocumentController::class, 'store'])->name('documents.
 Route::get('documents/{document}', [DocumentController::class, 'show'])->name('documents.show');
 Route::get('documents/{document}/telechargement', [DocumentController::class, 'download'])->name('documents.download');
 Route::delete('documents/{document}', [DocumentController::class, 'destroy'])->name('documents.destroy');
+
+Route::get('alertes', [NotificationController::class, 'index'])->name('alerts.index');
+Route::post('alertes/lues', [NotificationController::class, 'markAllRead'])->name('alerts.read');
+Route::put('alertes/preferences', [NotificationController::class, 'updatePreferences'])->name('alerts.preferences');

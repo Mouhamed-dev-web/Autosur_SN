@@ -23,6 +23,8 @@ class User extends Authenticatable implements FilamentUser
         'address',
         'photo_path',
         'password',
+        'notify_mail',
+        'notify_sms',
     ];
 
     protected $hidden = [
@@ -36,6 +38,8 @@ class User extends Authenticatable implements FilamentUser
             'email_verified_at' => 'datetime',
             'phone_verified_at' => 'datetime',
             'password' => 'hashed',
+            'notify_mail' => 'boolean',
+            'notify_sms' => 'boolean',
         ];
     }
 
