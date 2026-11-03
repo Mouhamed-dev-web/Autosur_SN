@@ -1,13 +1,16 @@
-<?php // app/Http/Controllers/Client/DashboardController.php
+<?php
 
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return view('client.dashboard');
+        $vehicles = $request->user()->vehicles()->latest()->get();
+
+        return view('client.dashboard', compact('vehicles'));
     }
 }

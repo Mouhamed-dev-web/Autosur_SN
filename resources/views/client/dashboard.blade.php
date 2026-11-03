@@ -1,12 +1,24 @@
-{{-- resources/views/client/dashboard.blade.php --}}
-@extends('layouts.guest')
-@section('title', 'Mon espace')
+@extends('layouts.client')
+@section('title', 'Tableau de bord')
 
 @section('content')
     <h1 class="text-2xl font-bold">Bonjour {{ auth()->user()->name }}</h1>
-    <p class="mt-2 text-gray-600">Votre espace automobiliste. Les modules arrivent à l'étape 3.</p>
-    <form method="POST" action="{{ route('logout') }}" class="mt-6">
-        @csrf
-        <button class="rounded border px-3 py-1.5 text-sm">Se déconnecter</button>
-    </form>
+
+    <div class="mt-6 grid gap-4 sm:grid-cols-2">
+        <a href="{{ route('client.vehicles.index') }}" class="rounded-lg bg-white p-5 shadow hover:shadow-md">
+            <p class="text-sm text-gray-500">Mes véhicules</p>
+            <p class="mt-1 text-3xl font-bold text-emerald-700">{{ $vehicles->count() }}</p>
+        </a>
+        <a href="{{ route('client.vehicles.create') }}" class="flex items-center justify-center rounded-lg border-2 border-dashed border-emerald-600 p-5 font-medium text-emerald-700 hover:bg-emerald-50">
+            + Ajouter un véhicule
+        </a>
+    </div>
+
+    @php($soon = $vehicles->filter->technicalVisitDueSoon())
+    @if ($soon->isNotEmpty())
+        <div class="mt-6 rounded bg-orange-50 p-4 text-sm text-orange-800">
+            Visite technique à prévoir (moins de 30 jours ou dépassée) :
+            @foreach ($soon as $v) <strong>{{ $v->plate }}</strong>@if (! $loop->last), @endif @endforeach
+        </div>
+    @endif
 @endsection
