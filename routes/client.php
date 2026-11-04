@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Client\InsuranceController;
+use App\Http\Controllers\Client\TechnicalVisitController;
 use App\Http\Controllers\Client\NotificationController;
 use App\Http\Controllers\Client\DashboardController;
 use App\Http\Controllers\Client\DocumentController;
@@ -26,3 +28,14 @@ Route::delete('documents/{document}', [DocumentController::class, 'destroy'])->n
 Route::get('alertes', [NotificationController::class, 'index'])->name('alerts.index');
 Route::post('alertes/lues', [NotificationController::class, 'markAllRead'])->name('alerts.read');
 Route::put('alertes/preferences', [NotificationController::class, 'updatePreferences'])->name('alerts.preferences');
+
+Route::get('visites-techniques', [TechnicalVisitController::class, 'index'])->name('visits.index');
+Route::get('visites-techniques/reserver', [TechnicalVisitController::class, 'create'])->name('visits.create');
+Route::post('visites-techniques', [TechnicalVisitController::class, 'store'])->name('visits.store');
+Route::post('visites-techniques/{visit}/annuler', [TechnicalVisitController::class, 'cancel'])->name('visits.cancel');
+
+Route::get('assurance', [InsuranceController::class, 'index'])->name('insurance.index');
+Route::get('assurance/devis', [InsuranceController::class, 'create'])->name('insurance.create');
+Route::post('assurance/devis', [InsuranceController::class, 'store'])->name('insurance.store');
+Route::get('assurance/devis/{quote}', [InsuranceController::class, 'show'])->name('insurance.show');
+Route::post('assurance/devis/{quote}/souscrire/{offer}', [InsuranceController::class, 'subscribe'])->name('insurance.subscribe');

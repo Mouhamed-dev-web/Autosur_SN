@@ -44,6 +44,7 @@ class VehicleRequest extends FormRequest
             'insurance_expires_at' => ['nullable', 'date'],
             'technical_visit_last_at' => ['nullable', 'date'],
             'technical_visit_expires_at' => ['nullable', 'date'],
+            'photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
         ];
     }
 
@@ -55,6 +56,9 @@ class VehicleRequest extends FormRequest
             'vin.unique' => 'Ce numéro de châssis est déjà enregistré.',
             'vin.alpha_num' => 'Le numéro de châssis ne contient que des lettres et des chiffres.',
             'year.between' => 'Année invalide.',
+            'photo.image' => 'Le fichier doit être une image.',
+            'photo.mimes' => 'Formats acceptés : JPG et PNG.',
+            'photo.max' => 'La photo ne doit pas dépasser 2 Mo.',
         ];
     }
 }

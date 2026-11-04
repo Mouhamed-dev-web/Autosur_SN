@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Client;
 
+use Illuminate\Support\Facades\Storage;
 use App\Enums\InsuranceStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Client\VehicleRequest;
@@ -25,9 +26,15 @@ class VehicleController extends Controller
         return view('client.vehicles.create', compact('vehicle'));
     }
 
-    public function store(VehicleRequest $request)
+   public function store(VehicleRequest $request)
     {
-        $vehicle = $request->user()->vehicles()->create($request->validated());
+        $data = $request->safe()->except('photo');
+
+        if ($request->hasFile('photo')) {
+            $data['photo_path'] = $request->file('photo')->store('vehicle-photos', 'public');
+        }
+
+        $vehicle = $request->user()->vehicles()->create($data);
 
         return redirect()->route('client.vehicles.show', $vehicle)
             ->with('status', 'Véhicule ajouté.');
@@ -47,11 +54,20 @@ class VehicleController extends Controller
         return view('client.vehicles.edit', compact('vehicle'));
     }
 
-    public function update(VehicleRequest $request, Vehicle $vehicle)
+   public function update(VehicleRequest $request, Vehicle $vehicle)
     {
         Gate::authorize('update', $vehicle);
 
-        $vehicle->update($request->validated());
+        $data = $request->safe()->except('photo');
+
+        if ($request->hasFile('photo')) {
+            if ($vehicle->photo_path) {
+                Storage::disk('public')->delete($vehicle->photo_path);
+            }
+            $data['photo_path'] = $request->file('photo')->store('vehicle-photos', 'public');
+        }
+
+        $vehicle->update($data);
 
         return redirect()->route('client.vehicles.show', $vehicle)
             ->with('status', 'Véhicule mis à jour.');

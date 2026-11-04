@@ -11,13 +11,6 @@
         <nav class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 p-4">
             <a href="{{ route('client.dashboard') }}" class="text-xl font-bold text-emerald-700">AutoSur.sn</a>
             @php($unread = auth()->user()->unreadNotifications()->count())
-<a href="{{ route('client.alerts.index') }}"
-   class="{{ request()->routeIs('client.alerts.*') ? 'font-semibold text-emerald-700' : 'hover:text-emerald-700' }}">
-    Alertes
-    @if ($unread > 0)
-        <span class="ml-1 rounded-full bg-red-600 px-1.5 py-0.5 text-xs text-white">{{ $unread }}</span>
-    @endif
-</a>
 
             <div class="flex flex-wrap items-center gap-4 text-sm">
                 <a href="{{ route('client.dashboard') }}"
@@ -26,6 +19,17 @@
                    class="{{ request()->routeIs('client.vehicles.*') ? 'font-semibold text-emerald-700' : 'hover:text-emerald-700' }}">Mes véhicules</a>
                 <a href="{{ route('client.profile.edit') }}"
                    class="{{ request()->routeIs('client.profile.*') ? 'font-semibold text-emerald-700' : 'hover:text-emerald-700' }}">Mon profil</a>
+                   <a href="{{ route('client.alerts.index') }}"
+            class="{{ request()->routeIs('client.alerts.*') ? 'font-semibold text-emerald-700' : 'hover:text-emerald-700' }}">
+                Alertes
+                @if ($unread > 0)
+                    <span class="ml-1 rounded-full bg-red-600 px-1.5 py-0.5 text-xs text-white">{{ $unread }}</span>
+                @endif
+            </a>
+                   <a href="{{ route('client.insurance.index') }}"
+            class="{{ request()->routeIs('client.insurance.*') ? 'font-semibold text-emerald-700' : 'hover:text-emerald-700' }}">Assurance</a>
+            <a href="{{ route('client.visits.index') }}"
+            class="{{ request()->routeIs('client.visits.*') ? 'font-semibold text-emerald-700' : 'hover:text-emerald-700' }}">Visite technique</a>
 
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf

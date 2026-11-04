@@ -52,6 +52,10 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->hasMany(Document::class);
     }
+    public function technicalVisits(): HasMany
+    {
+        return $this->hasMany(TechnicalVisit::class);
+    }
 
     public function photoUrl(): ?string
     {
@@ -61,5 +65,9 @@ class User extends Authenticatable implements FilamentUser
     public function canAccessPanel(Panel $panel): bool
     {
         return $this->hasRole('admin');
+    }
+    public function insuranceQuotes(): HasMany
+    {
+        return $this->hasMany(InsuranceQuote::class);
     }
 }

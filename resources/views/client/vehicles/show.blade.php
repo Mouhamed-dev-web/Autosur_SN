@@ -3,6 +3,9 @@
 
 @section('content')
 <div class="mx-auto max-w-2xl rounded-lg bg-white p-6 shadow">
+    @if ($vehicle->photoUrl())
+        <img src="{{ $vehicle->photoUrl() }}" alt="Photo {{ $vehicle->plate }}" class="mb-4 h-48 w-full rounded object-cover">
+    @endif
     <div class="flex flex-wrap items-start justify-between gap-2">
         <div>
             <h1 class="text-2xl font-bold">{{ $vehicle->plate }}</h1>
@@ -31,6 +34,21 @@
             </p>
         @empty
             <p class="mt-2 text-sm text-gray-500">Aucun document lié.</p>
+        @endforelse
+    </div>
+
+    <div class="mt-6 border-t pt-4">
+        <div class="flex items-center justify-between">
+            <h2 class="font-semibold">Historique des visites techniques</h2>
+            <a href="{{ route('client.visits.create', ['vehicle' => $vehicle->id]) }}" class="text-sm text-emerald-700 underline">+ Rendez-vous</a>
+        </div>
+        @forelse ($vehicle->technicalVisits()->latest('scheduled_at')->limit(5)->get() as $visit)
+            <p class="mt-2 text-sm">
+                {{ $visit->scheduled_at->format('d/m/Y H\hi') }}
+                <span class="ml-1 rounded px-2 py-0.5 text-xs font-medium {{ $visit->status->color() }}">{{ $visit->status->label() }}</span>
+            </p>
+        @empty
+            <p class="mt-2 text-sm text-gray-500">Aucune visite enregistrée.</p>
         @endforelse
     </div>
 

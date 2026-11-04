@@ -36,6 +36,14 @@
     </div>
 </div>
 
+<div class="mt-4">
+    <label class="block text-sm font-medium" for="photo">Photo du véhicule (JPG ou PNG, 2 Mo max)</label>
+    @if ($vehicle->photoUrl())
+        <img src="{{ $vehicle->photoUrl() }}" alt="" class="mt-2 h-24 rounded object-cover">
+    @endif
+    <input id="photo" name="photo" type="file" accept="image/png,image/jpeg" class="mt-1 text-sm">
+</div>
+
 <h2 class="mb-2 mt-6 font-semibold">Assurance</h2>
 <div class="grid gap-4 sm:grid-cols-2">
     <div>

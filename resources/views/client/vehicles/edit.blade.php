@@ -5,7 +5,7 @@
 <div class="mx-auto max-w-2xl rounded-lg bg-white p-6 shadow">
     <h1 class="text-2xl font-bold">Modifier {{ $vehicle->plate }}</h1>
 
-    <form method="POST" action="{{ route('client.vehicles.update', $vehicle) }}" class="mt-6">
+    <form method="POST" action="{{ route('client.vehicles.update', $vehicle) }}" class="mt-6" enctype="multipart/form-data">
         @csrf
         @method('PUT')
         @include('client.vehicles._form')
