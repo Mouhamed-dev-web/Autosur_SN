@@ -18,25 +18,33 @@
     @endif
 </div>
 
-@unless ($partner->is_validated)
+@if (! $partner->is_validated)
     <div class="mt-6 rounded bg-orange-50 p-4 text-sm text-orange-800">
         Votre compte est en attente de validation par AutoSur.sn. Vous pourrez recevoir des demandes dès sa validation.
     </div>
-@endunless
+@endif
 
 @if ($current)
     <a href="{{ route('partner.sos.show', $current) }}" class="mt-6 block rounded-lg border-l-4 border-blue-600 bg-white p-4 shadow">
         <p class="text-sm text-gray-500">Intervention en cours</p>
-        <p class="font-semibold">{{ $current->problem->label() }}
-            @if ($current->vehicle) · {{ $current->vehicle->brand }} {{ $current->vehicle->model }} @endif
+        <p class="font-semibold">
+            {{ $current->problem->label() }}
+            @if ($current->vehicle)
+                · {{ $current->vehicle->brand }} {{ $current->vehicle->model }}
+            @endif
         </p>
-        <span class="mt-1 inline-block rounded px-2 py-0.5 text-xs font-medium {{ $current->status->color() }}">{{ $current->status->label() }}</span>
+        <span class="mt-1 inline-block rounded px-2 py-0.5 text-xs font-medium {{ $current->status->color() }}">
+            {{ $current->status->label() }}
+        </span>
     </a>
 @elseif ($partner->is_validated && $partner->is_available)
     <h2 class="mt-6 font-semibold">Demandes proches ({{ $available->count() }})</h2>
 
     @forelse ($available as $row)
-        @php($sos = $row['request'])
+        @php
+            $sos = $row['request'];
+            $distance = $row['distance'];
+        @endphp
         <div class="mt-3 rounded-lg bg-white p-4 shadow">
             <div class="flex flex-wrap items-start justify-between gap-2">
                 <div>
@@ -44,12 +52,20 @@
                     @if ($sos->vehicle)
                         <p class="text-sm text-gray-600">{{ $sos->vehicle->brand }} {{ $sos->vehicle->model }}</p>
                     @endif
-                    @if ($sos->description) <p class="mt-1 text-sm text-gray-600">{{ $sos->description }}</p> @endif
-                    @if ($sos->location_text) <p class="text-sm text-gray-600">Lieu : {{ $sos->location_text }}</p> @endif
+                    @if ($sos->description)
+                        <p class="mt-1 text-sm text-gray-600">{{ $sos->description }}</p>
+                    @endif
+                    @if ($sos->location_text)
+                        <p class="text-sm text-gray-600">Lieu : {{ $sos->location_text }}</p>
+                    @endif
                     <p class="mt-1 text-xs text-gray-500">Il y a {{ $sos->created_at->diffForHumans(null, true) }}</p>
                 </div>
                 <p class="text-right text-lg font-bold text-emerald-700">
-                    {{ $row['distance'] !== null ? $row['distance'].' km' : 'Distance inconnue' }}
+                    @if ($distance !== null)
+                        {{ $distance }} km
+                    @else
+                        Distance inconnue
+                    @endif
                 </p>
             </div>
 
@@ -70,14 +86,24 @@
         </div>
     @endforelse
 
+    <div id="sos-watch"
+         data-url="{{ route('partner.sos.available') }}"
+         data-ids="{{ $available->pluck('request.id')->values()->implode(',') }}"
+         hidden></div>
+
     <script>
         (function () {
-            var current = @json($available->pluck('request.id')->values());
+            var el = document.getElementById('sos-watch');
+            if (!el) { return; }
+
+            var url = el.dataset.url;
+            var known = el.dataset.ids;
+
             setInterval(function () {
-                fetch(@json(route('partner.sos.available')), { headers: { 'Accept': 'application/json' } })
+                fetch(url, { headers: { 'Accept': 'application/json' } })
                     .then(function (r) { return r.ok ? r.json() : null; })
                     .then(function (d) {
-                        if (d && JSON.stringify(d.ids) !== JSON.stringify(current)) { location.reload(); }
+                        if (d && d.ids.join(',') !== known) { location.reload(); }
                     })
                     .catch(function () {});
             }, 10000);
