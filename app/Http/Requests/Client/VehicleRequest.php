@@ -56,9 +56,10 @@ class VehicleRequest extends FormRequest
             'vin.unique' => 'Ce numéro de châssis est déjà enregistré.',
             'vin.alpha_num' => 'Le numéro de châssis ne contient que des lettres et des chiffres.',
             'year.between' => 'Année invalide.',
+            'photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:5120'],
             'photo.image' => 'Le fichier doit être une image.',
             'photo.mimes' => 'Formats acceptés : JPG et PNG.',
-            'photo.max' => 'La photo ne doit pas dépasser 2 Mo.',
+            'photo.max' => 'La photo ne doit pas dépasser 5 Mo.',
         ];
     }
 }
