@@ -30,6 +30,8 @@
             class="{{ request()->routeIs('client.insurance.*') ? 'font-semibold text-emerald-700' : 'hover:text-emerald-700' }}">Assurance</a>
             <a href="{{ route('client.visits.index') }}"
             class="{{ request()->routeIs('client.visits.*') ? 'font-semibold text-emerald-700' : 'hover:text-emerald-700' }}">Visite technique</a>
+            <a href="{{ route('client.sos.index') }}"
+   class="{{ request()->routeIs('client.sos.*') ? 'font-semibold text-red-700' : 'text-red-700 hover:underline' }}">SOS Panne</a>
 
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf

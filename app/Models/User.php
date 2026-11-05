@@ -70,4 +70,13 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->hasMany(InsuranceQuote::class);
     }
+    public function sosRequests(): HasMany
+    {
+        return $this->hasMany(SosRequest::class);
+    }
+
+    public function partner(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(Partner::class);
+    }
 }

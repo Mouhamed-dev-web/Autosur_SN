@@ -3,6 +3,9 @@
 
 @section('content')
     <h1 class="text-2xl font-bold">Bonjour {{ auth()->user()->name }}</h1>
+    <a href="{{ route('client.sos.create') }}" class="mt-4 block rounded-lg bg-red-700 p-4 text-center text-lg font-bold text-white shadow hover:bg-red-800">
+        🚨 En panne ? Demander un dépanneur
+    </a>
 
     <div class="mt-6 grid gap-4 sm:grid-cols-2">
         <a href="{{ route('client.vehicles.index') }}" class="rounded-lg bg-white p-5 shadow hover:shadow-md">

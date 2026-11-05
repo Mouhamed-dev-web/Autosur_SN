@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Client\SosController;
 use App\Http\Controllers\Client\InsuranceController;
 use App\Http\Controllers\Client\TechnicalVisitController;
 use App\Http\Controllers\Client\NotificationController;
@@ -39,3 +40,10 @@ Route::get('assurance/devis', [InsuranceController::class, 'create'])->name('ins
 Route::post('assurance/devis', [InsuranceController::class, 'store'])->name('insurance.store');
 Route::get('assurance/devis/{quote}', [InsuranceController::class, 'show'])->name('insurance.show');
 Route::post('assurance/devis/{quote}/souscrire/{offer}', [InsuranceController::class, 'subscribe'])->name('insurance.subscribe');
+
+Route::get('sos', [SosController::class, 'index'])->name('sos.index');
+Route::get('sos/nouvelle', [SosController::class, 'create'])->name('sos.create');
+Route::post('sos', [SosController::class, 'store'])->name('sos.store');
+Route::get('sos/{sosRequest}', [SosController::class, 'show'])->name('sos.show');
+Route::get('sos/{sosRequest}/statut', [SosController::class, 'status'])->name('sos.status');
+Route::post('sos/{sosRequest}/annuler', [SosController::class, 'cancel'])->name('sos.cancel');
