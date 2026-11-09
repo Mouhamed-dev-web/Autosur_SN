@@ -10,6 +10,9 @@
 @error('visit')
     <div class="mt-4 rounded bg-red-50 p-3 text-sm text-red-700">{{ $message }}</div>
 @enderror
+@error('payment')
+    <div class="mt-4 rounded bg-red-50 p-3 text-sm text-red-700">{{ $message }}</div>
+@enderror
 
 @forelse ($visits as $visit)
     <div class="mt-4 rounded-lg bg-white p-4 shadow">
@@ -21,10 +24,19 @@
                 <p class="text-sm text-gray-700">{{ $visit->scheduled_at->translatedFormat('l d/m/Y à H\hi') }}</p>
                 <p class="mt-1 text-sm text-gray-500">
                     Frais de service : {{ $visit->feeForHumans() }}
-                    · {{ $visit->fee_paid_at ? 'payés' : 'à régler' }}
+                    · {{ $visit->fee_paid_at ? 'payés le '.$visit->fee_paid_at->format('d/m/Y') : 'à régler' }}
                 </p>
-                @if ($visit->notes)
-                    <p class="mt-1 text-sm text-gray-500">Note : {{ $visit->notes }}</p>
+
+                @if ($visit->canBePaid())
+                    <form method="POST" action="{{ route('client.visits.pay', $visit) }}" class="mt-2 flex flex-wrap gap-2">
+                        @csrf
+                        @foreach (\App\Enums\PaymentProvider::cases() as $provider)
+                            <button name="provider" value="{{ $provider->value }}"
+                                    class="rounded border border-emerald-700 px-3 py-1.5 text-sm font-medium text-emerald-700">
+                                Payer avec {{ $provider->label() }}
+                            </button>
+                        @endforeach
+                    </form>
                 @endif
             </div>
 

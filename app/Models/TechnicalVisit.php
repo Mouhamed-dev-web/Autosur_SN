@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use App\Enums\VisitStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -47,5 +48,20 @@ class TechnicalVisit extends Model
     public function feeForHumans(): string
     {
         return number_format($this->fee_amount, 0, ',', ' ').' FCFA';
+    }
+
+    public function transactions(): MorphMany
+    {
+        return $this->morphMany(Transaction::class, 'payable');
+    }
+
+    public function isPaid(): bool
+    {
+        return $this->fee_paid_at !== null;
+    }
+
+    public function canBePaid(): bool
+    {
+        return ! $this->isPaid() && $this->status !== VisitStatus::CANCELLED;
     }
 }

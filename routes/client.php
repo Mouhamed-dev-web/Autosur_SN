@@ -9,6 +9,7 @@ use App\Http\Controllers\Client\DocumentController;
 use App\Http\Controllers\Client\ProfileController;
 use App\Http\Controllers\Client\VehicleController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Client\PaymentController;
 
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -47,3 +48,7 @@ Route::post('sos', [SosController::class, 'store'])->name('sos.store');
 Route::get('sos/{sosRequest}', [SosController::class, 'show'])->name('sos.show');
 Route::get('sos/{sosRequest}/statut', [SosController::class, 'status'])->name('sos.status');
 Route::post('sos/{sosRequest}/annuler', [SosController::class, 'cancel'])->name('sos.cancel');
+
+Route::post('visites-techniques/{visit}/payer', [PaymentController::class, 'pay'])->name('visits.pay');
+Route::get('paiements', [PaymentController::class, 'index'])->name('payments.index');
+Route::get('paiements/{transaction}/retour', [PaymentController::class, 'result'])->name('payments.result');

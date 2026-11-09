@@ -16,4 +16,8 @@ class TechnicalVisitPolicy
     {
         return $user->id === $visit->user_id;
     }
+    public function pay(User $user, TechnicalVisit $visit): bool
+    {
+        return $user->id === $visit->user_id;
+    }
 }

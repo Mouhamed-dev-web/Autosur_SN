@@ -7,6 +7,7 @@
         ['route' => 'client.documents.index', 'match' => 'client.documents.*',  'label' => 'Coffre-fort'],
         ['route' => 'client.insurance.index', 'match' => 'client.insurance.*',  'label' => 'Assurance'],
         ['route' => 'client.visits.index',    'match' => 'client.visits.*',     'label' => 'Visite technique'],
+        ['route' => 'client.payments.index', 'match' => 'client.payments.*', 'label' => 'Paiements'],
         ['route' => 'client.alerts.index',    'match' => 'client.alerts.*',     'label' => 'Alertes', 'badge' => $unread],
         ['route' => 'client.profile.edit',    'match' => 'client.profile.*',    'label' => 'Mon profil'],
         ['route' => 'client.sos.index',       'match' => 'client.sos.*',        'label' => 'SOS Panne', 'danger' => true],
