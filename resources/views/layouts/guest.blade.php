@@ -1,3 +1,4 @@
+@include('partials.animated-bg', ['variant' => 'hero'])
 @php
     $links = [
         ['href' => route('home'), 'label' => 'Accueil', 'active' => request()->routeIs('home')],
@@ -72,8 +73,8 @@
         }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 antialiased">
-    <header class="relative bg-white shadow-sm">
+<body class="text-gray-800 antialiased">
+    <header class="relative bg-white/95 shadow-sm backdrop-blur">
         <nav class="mx-auto flex max-w-6xl items-center justify-between gap-3 p-4" aria-label="Navigation principale">
             <a href="{{ route('home') }}" class="text-xl font-bold text-emerald-700">AutoSur.sn</a>
 
@@ -122,7 +123,7 @@
         @yield('content')
     </main>
 
-    <footer class="mt-12 border-t p-6 text-center text-sm text-gray-500">
+    <footer class="mt-12 border-t border-white/20 p-6 text-center text-sm text-white/80">
         © {{ date('Y') }} AutoSur.sn, Dakar, Sénégal
     </footer>
 

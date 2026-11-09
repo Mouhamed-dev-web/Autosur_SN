@@ -63,9 +63,30 @@
             #main-menu form { margin-top: .75rem; padding-top: .75rem; border-top: 1px solid #e5e7eb; }
             #main-menu form button { width: 100%; }
         }
+        /* Animation du background voiture */
+        body {
+            background-image: url('../assets/images/voiture.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            animation: animationVoiture 15s ease-in-out infinite alternate;
+        }
+
+        @keyframes animationVoiture {
+            0% {
+                background-size: 100%;
+                background-position: center;
+            }
+
+            100% {
+                background-size: 110%;
+                background-position: center;
+            }
+        }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 antialiased">
+<body class="text-gray-800 antialiased">
+    @include('partials.animated-bg', ['variant' => 'soft'])
     <header class="relative bg-white shadow-sm">
         <nav class="mx-auto flex max-w-6xl items-center justify-between gap-3 p-4" aria-label="Navigation principale">
             <a href="{{ route('client.dashboard') }}" class="text-xl font-bold text-emerald-700">AutoSur.sn</a>
