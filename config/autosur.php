@@ -14,4 +14,5 @@ return [
         'open_hour' => 8,
         'close_hour' => 17,
     ],
+    'contact_email' => env('CONTACT_EMAIL'),
 ];

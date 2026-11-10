@@ -2,8 +2,8 @@
 @php
     $links = [
         ['href' => route('home'), 'label' => 'Accueil', 'active' => request()->routeIs('home')],
-        ['href' => '#', 'label' => 'Partenaires', 'active' => false],
-        ['href' => '#', 'label' => 'Contact', 'active' => false],
+        ['href' => route('partners'), 'label' => 'Partenaires', 'active' => request()->routeIs('partners')],
+        ['href' => route('contact'), 'label' => 'Contact', 'active' => request()->routeIs('contact')],
     ];
 
     $user = auth()->user();

@@ -90,7 +90,7 @@
                     </p>
                 </div>
                 <div class="md:text-right">
-                    <a href="#" class="inline-block rounded-xl border border-emerald-700 px-6 py-3 font-semibold text-emerald-700 hover:bg-emerald-50">Devenir partenaire</a>
+                    <a href="{{ route('contact', ['sujet' => 'partner']) }}" class="inline-block rounded-xl border border-emerald-700 px-6 py-3 font-semibold text-emerald-700 hover:bg-emerald-50">Devenir partenaire</a>
                 </div>
             </div>
         </div>
