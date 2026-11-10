@@ -63,10 +63,12 @@ class TechnicalVisitTest extends TestCase
 
     public function test_les_frais_restent_dans_la_fourchette(): void
     {
-        config(['autosur.technical_visit.fee' => 10000]);
+        $setting = \App\Models\Setting::where('name', 'technical_visit_fee')->firstOrFail();
+
+        $setting->update(['value' => '10000']);
         $this->assertSame(3000, app(TechnicalVisitService::class)->fee());
 
-        config(['autosur.technical_visit.fee' => 100]);
+        $setting->update(['value' => '100']);
         $this->assertSame(1500, app(TechnicalVisitService::class)->fee());
     }
 

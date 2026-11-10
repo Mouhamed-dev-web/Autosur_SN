@@ -5,6 +5,7 @@ namespace App\Notifications\Channels;
 use App\Contracts\SmsGatewayInterface;
 use App\Contracts\SmsNotification;
 use Illuminate\Notifications\Notification;
+use App\Models\Setting;
 
 class SmsChannel
 {
@@ -12,6 +13,9 @@ class SmsChannel
 
     public function send(object $notifiable, Notification $notification): void
     {
+        if (! Setting::bool('channel_sms_enabled', true)) {
+            return; // SMS désactivés depuis le back-office
+        }
         if (! $notification instanceof SmsNotification) {
             return; // cette notification ne gère pas le SMS
         }

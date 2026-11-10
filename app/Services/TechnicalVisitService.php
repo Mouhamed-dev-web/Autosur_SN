@@ -12,6 +12,7 @@ use App\Notifications\StatusNotification;
 use Carbon\CarbonInterface;
 use DomainException;
 use Illuminate\Support\Facades\DB;
+use App\Models\Setting;
 
 class TechnicalVisitService
 {
@@ -19,8 +20,9 @@ class TechnicalVisitService
     public function fee(): int
     {
         $config = config('autosur.technical_visit');
+        $fee = Setting::int('technical_visit_fee', (int) $config['fee']);
 
-        return max($config['fee_min'], min($config['fee_max'], $config['fee']));
+        return max($config['fee_min'], min($config['fee_max'], $fee));
     }
 
     public function create(
@@ -72,7 +74,7 @@ class TechnicalVisitService
             $visit->vehicle->update([
                 'technical_visit_last_at' => now()->toDateString(),
                 'technical_visit_expires_at' => now()
-                    ->addMonths(config('autosur.technical_visit.validity_months'))
+                    ->addMonths(Setting::int('technical_visit_validity_months', (int) config('autosur.technical_visit.validity_months')))
                     ->toDateString(),
             ]);
         });
@@ -162,4 +164,5 @@ class TechnicalVisitService
     {
         $visit->user->notify(new StatusNotification('Visite technique', $message, route('client.visits.index')));
     }
+    
 }

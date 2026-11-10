@@ -9,6 +9,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use App\Models\Setting;
 
 class DeadlineReminderNotification extends Notification implements ShouldQueue, SmsNotification
 {
@@ -22,7 +23,7 @@ class DeadlineReminderNotification extends Notification implements ShouldQueue, 
     {
         $channels = ['database']; // toujours actif : c'est la trace dans l'application
 
-        if ($notifiable->notify_mail && $notifiable->email) {
+        if (Setting::bool('channel_mail_enabled', true) && $notifiable->notify_mail && $notifiable->email) {
             $channels[] = 'mail';
         }
 
