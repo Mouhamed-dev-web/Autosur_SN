@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\CoverType;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class InsuranceOffer extends Model
 {
@@ -17,6 +18,7 @@ class InsuranceOffer extends Model
         'commission_rate',
         'description',
         'is_active',
+        'partner_id',
     ];
 
     protected function casts(): array
@@ -29,5 +31,9 @@ class InsuranceOffer extends Model
             'commission_rate' => 'float',
             'is_active' => 'boolean',
         ];
+    }
+    public function partner(): BelongsTo
+    {
+        return $this->belongsTo(Partner::class);
     }
 }

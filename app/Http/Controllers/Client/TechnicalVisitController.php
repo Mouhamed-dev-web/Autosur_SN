@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Client\TechnicalVisitRequest;
+use App\Models\Partner;
 use App\Models\TechnicalVisit;
 use App\Services\TechnicalVisitService;
 use Carbon\Carbon;
@@ -15,7 +16,7 @@ class TechnicalVisitController extends Controller
     public function index(Request $request)
     {
         $visits = $request->user()->technicalVisits()
-            ->with('vehicle')
+            ->with(['vehicle', 'partner', 'rating'])
             ->latest('scheduled_at')
             ->get();
 
@@ -26,6 +27,7 @@ class TechnicalVisitController extends Controller
     {
         return view('client.visits.create', [
             'vehicles' => $request->user()->vehicles()->orderBy('plate')->get(),
+            'garages' => Partner::where('type', 'garage')->where('is_validated', true)->orderBy('company_name')->get(),
             'selectedVehicle' => $request->integer('vehicle') ?: null,
             'fee' => $service->fee(),
         ]);
@@ -35,12 +37,14 @@ class TechnicalVisitController extends Controller
     {
         $user = $request->user();
         $vehicle = $user->vehicles()->findOrFail($request->validated('vehicle_id'));
+        $partnerId = $request->validated('partner_id');
 
         $service->create(
             $user,
             $vehicle,
             Carbon::parse($request->validated('scheduled_at')),
             $request->validated('notes'),
+            $partnerId ? Partner::find($partnerId) : null,
         );
 
         return redirect()->route('client.visits.index')

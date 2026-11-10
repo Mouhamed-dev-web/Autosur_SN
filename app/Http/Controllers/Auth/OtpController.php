@@ -7,7 +7,6 @@ use App\Models\User;
 use App\Services\OtpService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\RateLimiter;
 
 class OtpController extends Controller
 {
@@ -46,7 +45,7 @@ class OtpController extends Controller
         Auth::login($user);
         $request->session()->regenerate();
 
-        return redirect()->route('client.dashboard');
+        return redirect($user->homeUrl());
     }
 
     public function resend(OtpService $otp)

@@ -10,6 +10,7 @@ use App\Http\Controllers\Web\HomeController;
 use App\Http\Controllers\Web\PartnerDirectoryController;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\PartnerRegisterController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -24,6 +25,9 @@ Route::middleware('guest')->group(function () {
 
     Route::get('/connexion', [LoginController::class, 'create'])->name('login');
     Route::post('/connexion', [LoginController::class, 'store'])->name('login.store');
+
+    Route::get('/devenir-partenaire', [PartnerRegisterController::class, 'create'])->name('partners.register');
+    Route::post('/devenir-partenaire', [PartnerRegisterController::class, 'store'])->name('partners.register.store');
 });
 
 Route::get('/verification', [OtpController::class, 'show'])->name('otp.show');

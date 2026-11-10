@@ -7,12 +7,11 @@
     <a href="{{ route('client.visits.create') }}" class="rounded bg-emerald-700 px-4 py-2 text-sm font-medium text-white">+ Prendre rendez-vous</a>
 </div>
 
-@error('visit')
-    <div class="mt-4 rounded bg-red-50 p-3 text-sm text-red-700">{{ $message }}</div>
-@enderror
-@error('payment')
-    <div class="mt-4 rounded bg-red-50 p-3 text-sm text-red-700">{{ $message }}</div>
-@enderror
+@foreach (['visit', 'payment', 'rating'] as $key)
+    @error($key)
+        <div class="mt-4 rounded bg-red-50 p-3 text-sm text-red-700">{{ $message }}</div>
+    @enderror
+@endforeach
 
 @forelse ($visits as $visit)
     <div class="mt-4 rounded-lg bg-white p-4 shadow">
@@ -22,10 +21,20 @@
                     <span class="font-normal text-gray-600">· {{ $visit->vehicle->brand }} {{ $visit->vehicle->model }}</span>
                 </p>
                 <p class="text-sm text-gray-700">{{ $visit->scheduled_at->translatedFormat('l d/m/Y à H\hi') }}</p>
+                <p class="text-sm text-gray-600">
+                    @if ($visit->partner)
+                        Garage : {{ $visit->partner->company_name }}
+                    @elseif ($visit->status->isActive())
+                        Garage : en attente d'attribution
+                    @endif
+                </p>
                 <p class="mt-1 text-sm text-gray-500">
                     Frais de service : {{ $visit->feeForHumans() }}
                     · {{ $visit->fee_paid_at ? 'payés le '.$visit->fee_paid_at->format('d/m/Y') : 'à régler' }}
                 </p>
+                @if ($visit->notes)
+                    <p class="mt-1 text-sm text-gray-500">Note : {{ $visit->notes }}</p>
+                @endif
 
                 @if ($visit->canBePaid())
                     <form method="POST" action="{{ route('client.visits.pay', $visit) }}" class="mt-2 flex flex-wrap gap-2">
@@ -51,6 +60,19 @@
                 @endif
             </div>
         </div>
+
+        @if ($visit->status === \App\Enums\VisitStatus::COMPLETED && $visit->partner_id)
+            @if ($visit->rating)
+                <p class="mt-3 border-t pt-3 text-sm text-gray-600">
+                    Votre note : <span class="text-amber-600">{{ str_repeat('★', $visit->rating->score) }}{{ str_repeat('☆', 5 - $visit->rating->score) }}</span>
+                </p>
+            @else
+                @include('partials.rate-form', [
+                    'action' => route('client.visits.rate', $visit),
+                    'label' => 'Notez '.$visit->partner->company_name,
+                ])
+            @endif
+        @endif
     </div>
 @empty
     <div class="mt-6 rounded-lg bg-white p-8 text-center shadow">

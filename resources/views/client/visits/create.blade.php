@@ -27,6 +27,15 @@
                     @endforeach
                 </select>
             </div>
+            <div>
+                <label class="block text-sm font-medium" for="partner_id">Garage / centre de contrôle</label>
+                <select id="partner_id" name="partner_id" class="{{ $input }}">
+                    <option value="">Peu importe : le premier garage disponible</option>
+                    @foreach ($garages as $garage)
+                        <option value="{{ $garage->id }}" @selected((int) old('partner_id') === $garage->id)>{{ $garage->company_name }}</option>
+                    @endforeach
+                </select>
+            </div>
 
             <div>
                 <label class="block text-sm font-medium" for="scheduled_at">Date et heure souhaitées *</label>

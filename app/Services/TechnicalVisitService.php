@@ -2,10 +2,13 @@
 
 namespace App\Services;
 
+use App\Enums\PartnerType;
 use App\Enums\VisitStatus;
+use App\Models\Partner;
 use App\Models\TechnicalVisit;
 use App\Models\User;
 use App\Models\Vehicle;
+use App\Notifications\StatusNotification;
 use Carbon\CarbonInterface;
 use DomainException;
 use Illuminate\Support\Facades\DB;
@@ -20,10 +23,16 @@ class TechnicalVisitService
         return max($config['fee_min'], min($config['fee_max'], $config['fee']));
     }
 
-    public function create(User $user, Vehicle $vehicle, CarbonInterface $at, ?string $notes = null): TechnicalVisit
-    {
+    public function create(
+        User $user,
+        Vehicle $vehicle,
+        CarbonInterface $at,
+        ?string $notes = null,
+        ?Partner $partner = null,
+    ): TechnicalVisit {
         return $user->technicalVisits()->create([
             'vehicle_id' => $vehicle->id,
+            'partner_id' => $partner?->id,
             'scheduled_at' => $at,
             'status' => VisitStatus::REQUESTED,
             'fee_amount' => $this->fee(),
@@ -71,10 +80,86 @@ class TechnicalVisitService
         return $visit;
     }
 
+    /**
+     * Le garage confirme. Si la demande n'est pas encore attribuée, le premier
+     * garage qui confirme l'obtient (mise à jour atomique).
+     */
+    public function confirmBy(TechnicalVisit $visit, Partner $partner): TechnicalVisit
+    {
+        $this->assertGarage($partner);
+
+        $updated = TechnicalVisit::whereKey($visit->id)
+            ->where('status', VisitStatus::REQUESTED->value)
+            ->where(fn ($q) => $q->whereNull('partner_id')->orWhere('partner_id', $partner->id))
+            ->update([
+                'status' => VisitStatus::CONFIRMED->value,
+                'partner_id' => $partner->id,
+            ]);
+
+        if ($updated === 0) {
+            throw new DomainException('Cette demande a déjà été prise ou annulée.');
+        }
+
+        $visit->refresh();
+        $this->notify(
+            $visit,
+            "Votre rendez-vous du {$visit->scheduled_at->format('d/m/Y à H\hi')} est confirmé chez {$partner->company_name} ({$partner->contact_phone}).",
+        );
+
+        return $visit;
+    }
+
+    public function rejectBy(TechnicalVisit $visit, Partner $partner): TechnicalVisit
+    {
+        $this->assertGarage($partner);
+        $this->assertOwned($visit, $partner);
+
+        $this->cancel($visit);
+        $this->notify(
+            $visit,
+            "{$partner->company_name} ne peut pas honorer votre rendez-vous du {$visit->scheduled_at->format('d/m/Y')}. Vous pouvez en demander un autre.",
+        );
+
+        return $visit;
+    }
+
+    public function completeBy(TechnicalVisit $visit, Partner $partner): TechnicalVisit
+    {
+        $this->assertGarage($partner);
+        $this->assertOwned($visit, $partner);
+
+        $this->complete($visit);
+        $this->notify(
+            $visit,
+            "Visite technique effectuée chez {$partner->company_name}. Prochaine échéance : {$visit->vehicle->technical_visit_expires_at->format('d/m/Y')}. Pensez à noter le garage.",
+        );
+
+        return $visit;
+    }
+
+    private function assertGarage(Partner $partner): void
+    {
+        if ($partner->type !== PartnerType::GARAGE || ! $partner->is_validated) {
+            throw new DomainException('Votre compte garage doit être validé par AutoSur.sn.');
+        }
+    }
+
+    private function assertOwned(TechnicalVisit $visit, Partner $partner): void
+    {
+        if ($visit->partner_id !== $partner->id) {
+            throw new DomainException('Ce rendez-vous ne vous est pas attribué.');
+        }
+    }
+
     private function assertStatus(TechnicalVisit $visit, VisitStatus $expected): void
     {
         if ($visit->status !== $expected) {
             throw new DomainException("Statut attendu : {$expected->label()}.");
         }
+    }
+
+    private function notify(TechnicalVisit $visit, string $message): void
+    {
+        $visit->user->notify(new StatusNotification('Visite technique', $message, route('client.visits.index')));
     }
 }

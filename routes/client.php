@@ -10,6 +10,7 @@ use App\Http\Controllers\Client\ProfileController;
 use App\Http\Controllers\Client\VehicleController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Client\PaymentController;
+use App\Http\Controllers\Client\RatingController;
 
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -52,3 +53,6 @@ Route::post('sos/{sosRequest}/annuler', [SosController::class, 'cancel'])->name(
 Route::post('visites-techniques/{visit}/payer', [PaymentController::class, 'pay'])->name('visits.pay');
 Route::get('paiements', [PaymentController::class, 'index'])->name('payments.index');
 Route::get('paiements/{transaction}/retour', [PaymentController::class, 'result'])->name('payments.result');
+
+Route::post('visites-techniques/{visit}/noter', [RatingController::class, 'visit'])->name('visits.rate');
+Route::post('sos/{sosRequest}/noter', [RatingController::class, 'sos'])->name('sos.rate');

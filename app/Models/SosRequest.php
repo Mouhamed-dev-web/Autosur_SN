@@ -8,6 +8,7 @@ use App\Services\SosService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class SosRequest extends Model
 {
@@ -78,5 +79,9 @@ class SosRequest extends Model
     {
         return $this->status === SosStatus::PENDING
             && $this->created_at->lt(now()->subMinutes(SosService::PENDING_TTL_MINUTES));
+    }
+    public function rating(): MorphOne
+    {
+        return $this->morphOne(Rating::class, 'rateable');
     }
 }

@@ -9,11 +9,13 @@ class DashboardController extends Controller
 {
     public function index(Request $request)
     {
-        // Le dépanneur arrive directement sur ses demandes SOS
-        if ($request->user()->hasRole('depanneur')) {
-            return redirect()->route('partner.sos.index');
-        }
+        $user = $request->user();
 
-        return view('partner.dashboard');
+        return match (true) {
+            $user->hasRole('depanneur') => redirect()->route('partner.sos.index'),
+            $user->hasRole('garage') => redirect()->route('partner.visits.index'),
+            $user->hasRole('assurance') => redirect()->route('partner.insurance.index'),
+            default => view('partner.dashboard'),
+        };
     }
 }

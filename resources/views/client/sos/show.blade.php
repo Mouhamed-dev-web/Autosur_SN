@@ -75,6 +75,19 @@
             @include('partials.sos-map', ['lat' => $sos->lat, 'lng' => $sos->lng])
         @endif
 
+        @if ($sos->status === SosStatus::COMPLETED && $sos->partner_id)
+        @if ($sos->rating)
+            <p class="mt-6 border-t pt-3 text-sm text-gray-600">
+                Votre note : <span class="text-amber-600">{{ str_repeat('★', $sos->rating->score) }}{{ str_repeat('☆', 5 - $sos->rating->score) }}</span>
+            </p>
+        @else
+            @include('partials.rate-form', [
+                'action' => route('client.sos.rate', $sos),
+                'label' => 'Notez '.$sos->partner->company_name,
+            ])
+        @endif
+    @endif
+
         @if ($sos->canBeCancelled())
             <form method="POST" action="{{ route('client.sos.cancel', $sos) }}" class="mt-6"
                   onsubmit="return confirm('Annuler cette demande SOS ?')">

@@ -5,7 +5,13 @@
     if ($user && $user->hasRole('depanneur')) {
         $links[] = ['route' => 'partner.sos.index', 'match' => 'partner.sos.*', 'label' => 'Demandes SOS'];
     }
-    // Étape 10 : liens « Interventions » (garage) et « Prospects » (assureur)
+    if ($user && $user->hasRole('garage')) {
+        $links[] = ['route' => 'partner.visits.index', 'match' => 'partner.visits.*', 'label' => 'Rendez-vous'];
+    }
+    if ($user && $user->hasRole('assurance')) {
+        $links[] = ['route' => 'partner.insurance.index', 'match' => 'partner.insurance.*', 'label' => 'Prospects'];
+    }
+    $links[] = ['route' => 'partner.profile.edit', 'match' => 'partner.profile.*', 'label' => 'Mon profil'];
 @endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
@@ -102,8 +108,8 @@
         @if (session('status'))
             <div class="mb-4 rounded bg-emerald-50 p-3 text-sm text-emerald-800">{{ session('status') }}</div>
         @endif
-        @if ($errors->has('sos'))
-            <div class="mb-4 rounded bg-red-50 p-3 text-sm text-red-700">{{ $errors->first('sos') }}</div>
+        @if ($errors->has('sos') || $errors->has('partner'))
+            <div class="mb-4 rounded bg-red-50 p-3 text-sm text-red-700">{{ $errors->first('sos') ?: $errors->first('partner') }}</div>
         @endif
         @yield('content')
     </main>

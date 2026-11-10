@@ -17,7 +17,10 @@ class TechnicalVisitRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-        $this->merge(['notes' => $this->notes ?: null]);
+        $this->merge([
+            'notes' => $this->notes ?: null,
+            'partner_id' => $this->partner_id ?: null,
+        ]);
     }
 
     public function rules(): array
@@ -36,6 +39,11 @@ class TechnicalVisitRequest extends FormRequest
                         $fail('Une visite est déjà prévue pour ce véhicule. Annulez-la avant d\'en demander une autre.');
                     }
                 },
+            ],
+            // garage facultatif : uniquement un garage validé
+            'partner_id' => [
+                'nullable',
+                Rule::exists('partners', 'id')->where('type', 'garage')->where('is_validated', true),
             ],
             'scheduled_at' => [
                 'required',
@@ -59,6 +67,7 @@ class TechnicalVisitRequest extends FormRequest
     {
         return [
             'vehicle_id.exists' => 'Véhicule invalide.',
+            'partner_id.exists' => 'Garage invalide.',
             'scheduled_at.after' => 'Choisissez une date et une heure à venir.',
         ];
     }

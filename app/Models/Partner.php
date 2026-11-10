@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Partner extends Model
 {
-    // Créé et validé par l'administration (étapes 10 et 11), jamais depuis une saisie publique
+    // Créé à l'inscription partenaire ; la validation est faite par l'administration
     protected $fillable = [
         'user_id',
         'type',
@@ -42,6 +42,29 @@ class Partner extends Model
     public function sosRequests(): HasMany
     {
         return $this->hasMany(SosRequest::class);
+    }
+
+    public function visits(): HasMany
+    {
+        return $this->hasMany(TechnicalVisit::class);
+    }
+
+    public function insuranceOffers(): HasMany
+    {
+        return $this->hasMany(InsuranceOffer::class);
+    }
+
+    /** Avis non masqués par la modération. */
+    public function visibleRatings(): HasMany
+    {
+        return $this->hasMany(Rating::class)->where('is_hidden', false);
+    }
+
+    public function averageRating(): ?float
+    {
+        $avg = $this->visibleRatings()->avg('score');
+
+        return $avg === null ? null : round((float) $avg, 1);
     }
 
     public function hasBaseLocation(): bool

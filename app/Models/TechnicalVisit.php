@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use App\Enums\VisitStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class TechnicalVisit extends Model
 {
@@ -17,6 +18,7 @@ class TechnicalVisit extends Model
         'fee_paid_at',
         'notes',
         'completed_at',
+        'partner_id',
     ];
 
     protected function casts(): array
@@ -63,5 +65,14 @@ class TechnicalVisit extends Model
     public function canBePaid(): bool
     {
         return ! $this->isPaid() && $this->status !== VisitStatus::CANCELLED;
+    }
+    public function partner(): BelongsTo
+    {
+        return $this->belongsTo(Partner::class);
+    }
+
+    public function rating(): MorphOne
+    {
+        return $this->morphOne(Rating::class, 'rateable');
     }
 }

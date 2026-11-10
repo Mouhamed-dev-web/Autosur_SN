@@ -83,4 +83,12 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->hasMany(Transaction::class);
     }
+    public function homeUrl(): string
+    {
+        return match (true) {
+            $this->hasRole('admin') => url('/admin'),
+            $this->hasAnyRole(['garage', 'depanneur', 'assurance']) => route('partner.dashboard'),
+            default => route('client.dashboard'),
+        };
+    }
 }

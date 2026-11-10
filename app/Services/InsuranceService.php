@@ -10,6 +10,9 @@ use Carbon\CarbonInterface;
 use DomainException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use App\Enums\PartnerType;
+use App\Models\Partner;
+use App\Notifications\StatusNotification;
 
 class InsuranceService
 {
@@ -114,5 +117,50 @@ class InsuranceService
         $subscription->update(['status' => SubscriptionStatus::CANCELLED]);
 
         return $subscription;
+    }
+    public function activateBy(InsuranceSubscription $subscription, Partner $partner, ?CarbonInterface $start = null): InsuranceSubscription
+    {
+        $this->assertInsurer($subscription, $partner);
+
+        $this->activate($subscription, $start);
+        $this->notifyClient(
+            $subscription,
+            "Votre assurance {$subscription->offer->company_name} est activée jusqu'au {$subscription->ends_at->format('d/m/Y')}.",
+        );
+
+        return $subscription;
+    }
+
+    public function declineBy(InsuranceSubscription $subscription, Partner $partner): InsuranceSubscription
+    {
+        $this->assertInsurer($subscription, $partner);
+
+        $this->cancel($subscription);
+        $this->notifyClient(
+            $subscription,
+            "{$subscription->offer->company_name} n'a pas pu donner suite à votre demande. Vous pouvez comparer d'autres offres.",
+        );
+
+        return $subscription;
+    }
+
+    private function assertInsurer(InsuranceSubscription $subscription, Partner $partner): void
+    {
+        if ($partner->type !== PartnerType::ASSURANCE || ! $partner->is_validated) {
+            throw new DomainException('Votre compte assureur doit être validé par AutoSur.sn.');
+        }
+
+        if ($subscription->offer->partner_id !== $partner->id) {
+            throw new DomainException('Cette demande ne concerne pas votre compagnie.');
+        }
+    }
+
+    private function notifyClient(InsuranceSubscription $subscription, string $message): void
+    {
+        $subscription->user->notify(new StatusNotification(
+            'Assurance',
+            $message,
+            route('client.insurance.show', $subscription->insurance_quote_id),
+        ));
     }
 }

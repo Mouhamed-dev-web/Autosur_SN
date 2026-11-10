@@ -11,6 +11,8 @@ class PartnerDirectoryController extends Controller
     public function index()
     {
         $partners = Partner::where('is_validated', true)
+            ->withAvg('visibleRatings as ratings_avg', 'score')
+            ->withCount('visibleRatings as ratings_count')
             ->orderBy('company_name')
             ->get()
             ->groupBy(fn (Partner $p) => $p->type->value);
