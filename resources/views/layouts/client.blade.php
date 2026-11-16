@@ -10,6 +10,7 @@
         ['route' => 'client.payments.index', 'match' => 'client.payments.*', 'label' => 'Paiements'],
         ['route' => 'client.alerts.index',    'match' => 'client.alerts.*',     'label' => 'Alertes', 'badge' => $unread],
         ['route' => 'client.profile.edit',    'match' => 'client.profile.*',    'label' => 'Mon profil'],
+        ['route' => 'client.security.edit', 'match' => 'client.security.*', 'label' => 'Sécurité'],
         ['route' => 'client.sos.index',       'match' => 'client.sos.*',        'label' => 'SOS Panne', 'danger' => true],
     ];
 @endphp

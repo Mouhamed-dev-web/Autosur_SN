@@ -25,6 +25,7 @@
     <title>@yield('title', 'AutoSur.sn') | Votre auto, en toute sérénité</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
+    <meta name="description" content="@yield('description', 'AutoSur.sn : véhicules, documents, assurance, visite technique et assistance SOS pour l automobiliste sénégalais.')">
 
     <style>
         /* Téléphone : menu caché, ouvert par le bouton */
@@ -124,7 +125,13 @@
     </main>
 
     <footer class="mt-12 border-t border-white/20 p-6 text-center text-sm text-white/80">
-        © {{ date('Y') }} AutoSur.sn, Dakar, Sénégal
+        <p>
+            <a href="{{ route('legal.notice') }}" class="underline">Mentions légales</a> ·
+            <a href="{{ route('legal.terms') }}" class="underline">Conditions d'utilisation</a> ·
+            <a href="{{ route('legal.privacy') }}" class="underline">Confidentialité</a> ·
+            <a href="{{ route('contact') }}" class="underline">Contact</a>
+        </p>
+        <p class="mt-2">© {{ date('Y') }} AutoSur.sn, Dakar, Sénégal</p>
     </footer>
 
     @livewireScripts

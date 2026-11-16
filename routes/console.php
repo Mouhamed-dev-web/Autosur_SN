@@ -11,3 +11,7 @@ Artisan::command('inspire', function () {
 Schedule::command('autosur:scan-deadlines')
     ->dailyAt('08:00')
     ->withoutOverlapping();
+
+Schedule::command('autosur:purge-data')
+    ->dailyAt('03:00')
+    ->withoutOverlapping();

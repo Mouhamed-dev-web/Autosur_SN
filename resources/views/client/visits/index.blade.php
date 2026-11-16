@@ -51,7 +51,7 @@
 
             <div class="text-right">
                 <span class="rounded px-2 py-1 text-xs font-medium {{ $visit->status->color() }}">{{ $visit->status->label() }}</span>
-                @if ($visit->canBeCancelled())
+                @if ($visit->canBePaid() && config('payments.enabled'))
                     <form method="POST" action="{{ route('client.visits.cancel', $visit) }}" class="mt-2"
                           onsubmit="return confirm('Annuler ce rendez-vous ?')">
                         @csrf

@@ -11,6 +11,7 @@ use App\Http\Controllers\Client\VehicleController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Client\PaymentController;
 use App\Http\Controllers\Client\RatingController;
+use App\Http\Controllers\Client\SecurityController;
 
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -56,3 +57,9 @@ Route::get('paiements/{transaction}/retour', [PaymentController::class, 'result'
 
 Route::post('visites-techniques/{visit}/noter', [RatingController::class, 'visit'])->name('visits.rate');
 Route::post('sos/{sosRequest}/noter', [RatingController::class, 'sos'])->name('sos.rate');
+
+Route::get('securite', [SecurityController::class, 'edit'])->name('security.edit');
+Route::put('securite/mot-de-passe', [SecurityController::class, 'updatePassword'])->name('security.password');
+Route::post('securite/telephone', [SecurityController::class, 'requestPhone'])->middleware('throttle:5,10')->name('security.phone.request');
+Route::post('securite/telephone/confirmer', [SecurityController::class, 'confirmPhone'])->middleware('throttle:10,10')->name('security.phone.confirm');
+Route::post('securite/telephone/annuler', [SecurityController::class, 'cancelPhone'])->name('security.phone.cancel');

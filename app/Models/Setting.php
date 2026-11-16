@@ -21,6 +21,16 @@ class Setting extends Model
     {
         static::saved(fn () => Cache::forget('settings'));
         static::deleted(fn () => Cache::forget('settings'));
+
+        static::updated(function (Setting $setting) {
+            if ($setting->wasChanged('value')) {
+                AuditLog::record('setting.updated', $setting, [
+                    'name' => $setting->name,
+                    'from' => $setting->getOriginal('value'),
+                    'to' => $setting->value,
+                ]);
+            }
+        });
     }
 
     public static function get(string $name, mixed $default = null): mixed

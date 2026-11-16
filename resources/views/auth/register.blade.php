@@ -43,6 +43,11 @@
         </div>
 
         <button class="w-full rounded bg-emerald-700 py-2 font-medium text-white">Recevoir mon code SMS</button>
+        <p class="text-center text-xs text-gray-500">
+            En créant un compte, vous acceptez les
+            <a class="underline" href="{{ route('legal.terms') }}">conditions d'utilisation</a> et la
+            <a class="underline" href="{{ route('legal.privacy') }}">politique de confidentialité</a>.
+        </p>
     </form>
 
     <p class="mt-4 text-center text-sm">Déjà inscrit ? <a class="text-emerald-700 underline" href="{{ route('login') }}">Connexion</a></p>

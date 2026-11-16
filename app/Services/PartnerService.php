@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\AuditLog;
 use App\Models\Partner;
 use App\Notifications\StatusNotification;
 
@@ -10,6 +11,7 @@ class PartnerService
     public function validate(Partner $partner): Partner
     {
         $partner->update(['is_validated' => true]);
+        AuditLog::record('partner.validated', $partner, ['company' => $partner->company_name]);
 
         $partner->user->notify(new StatusNotification(
             'Compte partenaire',
@@ -24,6 +26,7 @@ class PartnerService
     public function suspend(Partner $partner): Partner
     {
         $partner->update(['is_validated' => false, 'is_available' => false]);
+        AuditLog::record('partner.suspended', $partner, ['company' => $partner->company_name]);
 
         $partner->user->notify(new StatusNotification(
             'Compte partenaire',

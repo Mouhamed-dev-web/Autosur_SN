@@ -26,6 +26,19 @@ class Rating extends Model
         ];
     }
 
+    protected static function booted(): void
+    {
+        static::updated(function (Rating $rating) {
+            if ($rating->wasChanged('is_hidden')) {
+                AuditLog::record(
+                    $rating->is_hidden ? 'rating.hidden' : 'rating.shown',
+                    $rating,
+                    ['partner_id' => $rating->partner_id],
+                );
+            }
+        });
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

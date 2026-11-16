@@ -14,5 +14,13 @@ return [
         'open_hour' => 8,
         'close_hour' => 17,
     ],
+
     'contact_email' => env('CONTACT_EMAIL'),
+
+    // Durées de conservation des données personnelles
+    'retention' => [
+        'sos_days' => 30,      // position et lieu d'un SOS terminé ou annulé
+        'contact_ip_days' => 90, // adresse IP des messages de contact
+        'read_notifications_days' => 90,
+    ],
 ];

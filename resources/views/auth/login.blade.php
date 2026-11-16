@@ -29,5 +29,6 @@
     </form>
 
     <p class="mt-4 text-center text-sm">Pas encore de compte ? <a class="text-emerald-700 underline" href="{{ route('register') }}">S'inscrire</a></p>
+    <p class="text-right text-sm"><a class="text-emerald-700 underline" href="{{ route('password.request') }}">Mot de passe oublié ?</a></p>
 </div>
 @endsection

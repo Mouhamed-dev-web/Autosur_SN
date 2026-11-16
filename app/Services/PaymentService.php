@@ -36,6 +36,9 @@ class PaymentService
     /** Crée la transaction et retourne l'URL de paiement de l'opérateur. */
     public function start(User $user, TechnicalVisit $visit, PaymentProvider $provider): string
     {
+        if (! config('payments.enabled')) {
+            throw new DomainException('Le paiement en ligne sera bientôt disponible.');
+        }
         if (! $visit->canBePaid()) {
             throw new DomainException('Les frais de cette visite sont déjà réglés, ou la visite est annulée.');
         }
