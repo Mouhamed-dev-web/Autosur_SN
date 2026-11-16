@@ -38,7 +38,16 @@ class OtpService
             'expires_at' => now()->addMinutes(self::TTL_MINUTES),
         ]);
 
-        $this->sms->send($phone, "AutoSur.sn : votre code est {$code}. Valable ".self::TTL_MINUTES.' minutes.');
+        $sent = $this->sms->send($phone, "AutoSur.sn : votre code est {$code}. Valable ".self::TTL_MINUTES.' minutes.');
+
+        if (! $sent) {
+            OtpCode::where('phone', $phone)->where('purpose', $purpose)->whereNull('consumed_at')->delete();
+            RateLimiter::clear($key); // un envoi raté ne consomme pas le quota
+
+            throw ValidationException::withMessages([
+                'code' => 'Le SMS n\'a pas pu être envoyé. Réessayez dans un instant.',
+            ]);
+        }
     }
 
     public function verify(string $phone, string $code, string $purpose = 'verify_phone'): bool
