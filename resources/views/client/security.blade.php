@@ -68,6 +68,11 @@
                 <button class="rounded border border-emerald-700 px-4 py-2 font-medium text-emerald-700">Recevoir un code</button>
             </form>
         @endif
+        <div class="rounded-lg border border-red-200 bg-white p-6 shadow">
+            <h2 class="font-semibold text-red-700">Supprimer mon compte</h2>
+            <p class="mt-1 text-sm text-gray-600">Efface vos données de façon définitive.</p>
+            <a href="{{ route('client.account.delete') }}" class="mt-3 inline-block rounded border border-red-300 px-4 py-2 text-sm text-red-700">Supprimer mon compte</a>
+        </div>
     </div>
 </div>
 @endsection

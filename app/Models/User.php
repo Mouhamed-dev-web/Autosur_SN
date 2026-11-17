@@ -47,6 +47,7 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
             'notify_sms' => 'boolean',
             'app_authentication_secret' => 'encrypted',
             'app_authentication_recovery_codes' => 'encrypted:array',
+            'anonymized_at' => 'datetime'
         ];
     }
 

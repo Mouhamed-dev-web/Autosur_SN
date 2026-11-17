@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Client\PaymentController;
 use App\Http\Controllers\Client\RatingController;
 use App\Http\Controllers\Client\SecurityController;
+use App\Http\Controllers\Client\AccountController;
+
 
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -63,3 +65,6 @@ Route::put('securite/mot-de-passe', [SecurityController::class, 'updatePassword'
 Route::post('securite/telephone', [SecurityController::class, 'requestPhone'])->middleware('throttle:5,10')->name('security.phone.request');
 Route::post('securite/telephone/confirmer', [SecurityController::class, 'confirmPhone'])->middleware('throttle:10,10')->name('security.phone.confirm');
 Route::post('securite/telephone/annuler', [SecurityController::class, 'cancelPhone'])->name('security.phone.cancel');
+
+Route::get('compte/supprimer', [AccountController::class, 'show'])->name('account.delete');
+Route::delete('compte/supprimer', [AccountController::class, 'destroy'])->middleware('throttle:5,10')->name('account.destroy');
