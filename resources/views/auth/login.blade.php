@@ -1,34 +1,29 @@
-@extends('layouts.guest')
+@extends('layouts.auth')
 @section('title', 'Connexion')
 
 @section('content')
-<div class="mx-auto max-w-md rounded-lg bg-white p-6 shadow">
-    <h1 class="text-2xl font-bold">Connexion</h1>
+<h1 class="text-2xl font-bold text-gray-900">Bon retour 👋</h1>
+<p class="mt-1 text-sm text-gray-500">Connectez-vous à votre espace AutoSur.sn.</p>
 
-    <form method="POST" action="{{ route('login.store') }}" class="mt-6 space-y-4">
-        @csrf
+<form method="POST" action="{{ route('login.store') }}" class="mt-6 space-y-4">
+    @csrf
+    <x-auth.field name="identifier" label="Téléphone ou e-mail" icon="👤" required autofocus placeholder="77 123 45 67" />
+    <x-auth.field name="password" label="Mot de passe" type="password" icon="🔒" required />
 
-        <div>
-            <label class="block text-sm font-medium" for="identifier">Téléphone ou e-mail</label>
-            <input id="identifier" name="identifier" value="{{ old('identifier') }}" required autofocus
-                   class="mt-1 w-full rounded p-2 border border-gray-300">
-            @error('identifier') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-        </div>
-
-        <div>
-            <label class="block text-sm font-medium" for="password">Mot de passe</label>
-            <input id="password" name="password" type="password" required
-                   class="mt-1 w-full rounded p-2 border border-gray-300">
-        </div>
-
-        <label class="flex items-center gap-2 text-sm">
-            <input type="checkbox" name="remember" value="1"> Se souvenir de moi
+    <div class="flex items-center justify-between text-sm">
+        <label class="flex items-center gap-2 text-gray-600">
+            <input type="checkbox" name="remember" value="1" class="rounded border-gray-300"> Se souvenir de moi
         </label>
+        <a href="{{ route('password.request') }}" class="text-emerald-700 hover:underline">Mot de passe oublié ?</a>
+    </div>
 
-        <button class="w-full rounded bg-emerald-700 py-2 font-medium text-white">Se connecter</button>
-    </form>
+    <button class="w-full rounded-lg bg-emerald-700 py-3 font-semibold text-white shadow hover:bg-emerald-800">Se connecter</button>
+</form>
 
-    <p class="mt-4 text-center text-sm">Pas encore de compte ? <a class="text-emerald-700 underline" href="{{ route('register') }}">S'inscrire</a></p>
-    <p class="text-right text-sm"><a class="text-emerald-700 underline" href="{{ route('password.request') }}">Mot de passe oublié ?</a></p>
-</div>
+<p class="mt-5 text-center text-sm text-gray-600">
+    Pas encore de compte ? <a href="{{ route('register') }}" class="font-semibold text-emerald-700 hover:underline">S'inscrire</a>
+</p>
+<p class="mt-2 text-center text-sm text-gray-600">
+    Vous êtes un professionnel ? <a href="{{ route('partners.register') }}" class="font-semibold text-emerald-700 hover:underline">Devenir partenaire</a>
+</p>
 @endsection

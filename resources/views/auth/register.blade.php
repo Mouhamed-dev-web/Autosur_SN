@@ -1,55 +1,31 @@
-@extends('layouts.guest')
+@extends('layouts.auth')
 @section('title', 'Inscription')
 
 @section('content')
-<div class="mx-auto max-w-md rounded-lg bg-white p-6 shadow">
-    <h1 class="text-2xl font-bold">Créer mon compte</h1>
+<h1 class="text-2xl font-bold text-gray-900">Créer mon compte</h1>
+<p class="mt-1 text-sm text-gray-500">Gratuit, en moins de deux minutes. Un code SMS confirme votre numéro.</p>
 
-    <form method="POST" action="{{ route('register.store') }}" class="mt-6 space-y-4">
-        @csrf
+<form method="POST" action="{{ route('register.store') }}" class="mt-6 space-y-4">
+    @csrf
+    <x-auth.field name="name" label="Nom complet" icon="👤" required />
+    <x-auth.field name="phone" label="Téléphone" type="tel" icon="📱" required placeholder="77 123 45 67" inputmode="tel" />
+    <x-auth.field name="email" label="E-mail (facultatif)" type="email" icon="✉️" />
 
-        <div>
-            <label class="block text-sm font-medium" for="name">Nom complet</label>
-            <input id="name" name="name" value="{{ old('name') }}" required
-                   class="mt-1 w-full rounded border-gray-300 p-2 border">
-            @error('name') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-        </div>
+    <div class="grid gap-4 sm:grid-cols-2">
+        <x-auth.field name="password" label="Mot de passe" type="password" icon="🔒" required hint="8 caractères minimum" />
+        <x-auth.field name="password_confirmation" label="Confirmer" type="password" icon="🔒" required />
+    </div>
 
-        <div>
-            <label class="block text-sm font-medium" for="phone">Téléphone</label>
-            <input id="phone" name="phone" type="tel" inputmode="tel" placeholder="77 123 45 67"
-                   value="{{ old('phone') }}" required class="mt-1 w-full rounded p-2 border border-gray-300">
-            @error('phone') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-        </div>
+    <button class="w-full rounded-lg bg-emerald-700 py-3 font-semibold text-white shadow hover:bg-emerald-800">Recevoir mon code SMS</button>
 
-        <div>
-            <label class="block text-sm font-medium" for="email">E-mail (facultatif)</label>
-            <input id="email" name="email" type="email" value="{{ old('email') }}"
-                   class="mt-1 w-full rounded p-2 border border-gray-300">
-            @error('email') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-        </div>
+    <p class="text-center text-xs text-gray-500">
+        En créant un compte, vous acceptez les
+        <a class="underline" href="{{ route('legal.terms') }}">conditions d'utilisation</a> et la
+        <a class="underline" href="{{ route('legal.privacy') }}">politique de confidentialité</a>.
+    </p>
+</form>
 
-        <div>
-            <label class="block text-sm font-medium" for="password">Mot de passe (8 caractères min.)</label>
-            <input id="password" name="password" type="password" required
-                   class="mt-1 w-full rounded p-2 border border-gray-300">
-            @error('password') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-        </div>
-
-        <div>
-            <label class="block text-sm font-medium" for="password_confirmation">Confirmer le mot de passe</label>
-            <input id="password_confirmation" name="password_confirmation" type="password" required
-                   class="mt-1 w-full rounded p-2 border border-gray-300">
-        </div>
-
-        <button class="w-full rounded bg-emerald-700 py-2 font-medium text-white">Recevoir mon code SMS</button>
-        <p class="text-center text-xs text-gray-500">
-            En créant un compte, vous acceptez les
-            <a class="underline" href="{{ route('legal.terms') }}">conditions d'utilisation</a> et la
-            <a class="underline" href="{{ route('legal.privacy') }}">politique de confidentialité</a>.
-        </p>
-    </form>
-
-    <p class="mt-4 text-center text-sm">Déjà inscrit ? <a class="text-emerald-700 underline" href="{{ route('login') }}">Connexion</a></p>
-</div>
+<p class="mt-5 text-center text-sm text-gray-600">
+    Déjà inscrit ? <a href="{{ route('login') }}" class="font-semibold text-emerald-700 hover:underline">Connexion</a>
+</p>
 @endsection

@@ -1,96 +1,61 @@
-@extends('layouts.guest')
+@extends('layouts.auth')
 @section('title', 'Devenir partenaire')
+@section('card_class', 'auth-card--wide')
 
 @section('content')
-@php($input = 'mt-1 w-full rounded border border-gray-300 p-2')
-<div class="mx-auto my-8 max-w-xl rounded-2xl bg-white/95 p-6 shadow-lg sm:p-8">
-    <h1 class="text-2xl font-bold text-gray-900">Devenir partenaire</h1>
-    <p class="mt-1 text-sm text-gray-600">
-        Garages, dépanneurs et assureurs : créez votre compte professionnel. Votre dossier est examiné par AutoSur.sn avant activation.
-    </p>
+<h1 class="text-2xl font-bold text-gray-900">Devenir partenaire</h1>
+<p class="mt-1 text-sm text-gray-500">Garages, dépanneurs et assureurs : créez votre compte. Votre dossier est examiné par AutoSur.sn avant activation.</p>
 
-    @if ($errors->any())
-        <div class="mt-4 rounded bg-red-50 p-3 text-sm text-red-700">
-            @foreach ($errors->all() as $error)
-                <p>{{ $error }}</p>
-            @endforeach
-        </div>
-    @endif
+<form method="POST" action="{{ route('partners.register.store') }}" class="mt-6 space-y-4">
+    @csrf
 
-    <form method="POST" action="{{ route('partners.register.store') }}" class="mt-6 space-y-4">
-        @csrf
+    <div>
+        <label class="block text-sm font-medium text-gray-700" for="type">Vous êtes</label>
+        <select id="type" name="type" class="mt-1 block w-full rounded-lg border border-gray-300 bg-gray-50 py-2.5 pl-3 text-sm focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-200">
+            <option value="garage" @selected(old('type') === 'garage')>🔧 Garage / centre de contrôle</option>
+            <option value="depanneur" @selected(old('type') === 'depanneur')>🚛 Dépanneur</option>
+            <option value="assurance" @selected(old('type') === 'assurance')>🛡️ Compagnie d'assurance</option>
+        </select>
+    </div>
 
-        <div>
-            <label class="block text-sm font-medium" for="type">Vous êtes *</label>
-            <select id="type" name="type" class="{{ $input }}">
-                <option value="garage" @selected(old('type') === 'garage')>Garage / centre de contrôle</option>
-                <option value="depanneur" @selected(old('type') === 'depanneur')>Dépanneur</option>
-                <option value="assurance" @selected(old('type') === 'assurance')>Compagnie d'assurance</option>
-            </select>
-        </div>
+    <x-auth.field name="company_name" label="Raison sociale" icon="🏢" required />
+    <x-auth.field name="contact_phone" label="Téléphone professionnel (affiché aux clients)" type="tel" icon="☎️" required placeholder="77 123 45 67" />
 
-        <div>
-            <label class="block text-sm font-medium" for="company_name">Raison sociale *</label>
-            <input id="company_name" name="company_name" value="{{ old('company_name') }}" required class="{{ $input }}">
-        </div>
+    <h2 class="pt-2 text-sm font-semibold uppercase tracking-wide text-gray-500">Responsable du compte</h2>
+    <x-auth.field name="name" label="Nom complet" icon="👤" required />
 
-        <div>
-            <label class="block text-sm font-medium" for="contact_phone">Téléphone professionnel (affiché aux clients) *</label>
-            <input id="contact_phone" name="contact_phone" type="tel" placeholder="77 123 45 67" value="{{ old('contact_phone') }}" required class="{{ $input }}">
-        </div>
+    <div class="grid gap-4 sm:grid-cols-2">
+        <x-auth.field name="phone" label="Téléphone (code SMS)" type="tel" icon="📱" required placeholder="77 123 45 67" />
+        <x-auth.field name="email" label="E-mail" type="email" icon="✉️" />
+    </div>
 
-        <h2 class="pt-2 font-semibold">Responsable du compte</h2>
+    <div class="grid gap-4 sm:grid-cols-2">
+        <x-auth.field name="password" label="Mot de passe" type="password" icon="🔒" required hint="8 caractères minimum" />
+        <x-auth.field name="password_confirmation" label="Confirmer" type="password" icon="🔒" required />
+    </div>
 
-        <div>
-            <label class="block text-sm font-medium" for="name">Nom complet *</label>
-            <input id="name" name="name" value="{{ old('name') }}" required class="{{ $input }}">
-        </div>
+   @include('partials.location-picker', ['lat' => old('base_lat'), 'lng' => old('base_lng')])
 
-        <div class="grid gap-4 sm:grid-cols-2">
-            <div>
-                <label class="block text-sm font-medium" for="phone">Téléphone (code SMS) *</label>
-                <input id="phone" name="phone" type="tel" placeholder="77 123 45 67" value="{{ old('phone') }}" required class="{{ $input }}">
-            </div>
-            <div>
-                <label class="block text-sm font-medium" for="email">E-mail</label>
-                <input id="email" name="email" type="email" value="{{ old('email') }}" class="{{ $input }}">
-            </div>
-        </div>
+    <div>
+        <label class="block text-sm font-medium text-gray-700" for="radius_km">Rayon d'intervention en km (dépanneurs)</label>
+        <input id="radius_km" name="radius_km" type="number" min="1" max="100" value="{{ old('radius_km', 30) }}"
+            class="mt-1 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm">
+    </div>
 
-        <div class="grid gap-4 sm:grid-cols-2">
-            <div>
-                <label class="block text-sm font-medium" for="password">Mot de passe (8 caractères min.) *</label>
-                <input id="password" name="password" type="password" required class="{{ $input }}">
-            </div>
-            <div>
-                <label class="block text-sm font-medium" for="password_confirmation">Confirmer *</label>
-                <input id="password_confirmation" name="password_confirmation" type="password" required class="{{ $input }}">
-            </div>
-        </div>
+    <label class="flex items-start gap-2 text-sm text-gray-700">
+        <input type="checkbox" name="terms" value="1" class="mt-1 rounded border-gray-300" @checked(old('terms'))>
+        J'accepte que mon dossier soit examiné par AutoSur.sn avant l'activation de mon compte.
+    </label>
 
-        <div class="rounded border border-gray-200 p-3">
-            <p class="text-sm font-medium">Localisation (garages et dépanneurs)</p>
-            <p id="geo-status" class="mt-1 text-xs text-gray-500">Facultatif : elle sert à calculer les distances.</p>
-            <button type="button" id="geo-btn" class="mt-2 rounded border px-3 py-1.5 text-sm">Utiliser ma position actuelle</button>
-            <input type="hidden" id="base_lat" name="base_lat" value="{{ old('base_lat') }}">
-            <input type="hidden" id="base_lng" name="base_lng" value="{{ old('base_lng') }}">
+    <button class="w-full rounded-lg bg-emerald-700 py-3 font-semibold text-white shadow hover:bg-emerald-800">Créer mon compte partenaire</button>
+</form>
 
-            <label class="mt-3 block text-sm font-medium" for="radius_km">Rayon d'intervention en km (dépanneurs)</label>
-            <input id="radius_km" name="radius_km" type="number" min="1" max="100" value="{{ old('radius_km', 30) }}" class="{{ $input }}">
-        </div>
-
-        <label class="flex items-start gap-2 text-sm text-gray-700">
-            <input type="checkbox" name="terms" value="1" class="mt-1" @checked(old('terms'))>
-            J'accepte que mon dossier soit examiné par AutoSur.sn avant l'activation de mon compte.
-        </label>
-
-        <button class="w-full rounded-xl bg-emerald-700 px-4 py-3 font-semibold text-white hover:bg-emerald-800">Créer mon compte partenaire</button>
-    </form>
-</div>
+<p class="mt-5 text-center text-sm text-gray-600">
+    Déjà partenaire ? <a href="{{ route('login') }}" class="font-semibold text-emerald-700 hover:underline">Connexion</a>
+</p>
 
 <script>
     (function () {
-        var btn = document.getElementById('geo-btn');
         var lat = document.getElementById('base_lat');
         var lng = document.getElementById('base_lng');
         var status = document.getElementById('geo-status');
