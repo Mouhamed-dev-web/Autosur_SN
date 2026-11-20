@@ -2,6 +2,8 @@
     $user = auth()->user();
     $links = [];
 
+    $links[] = ['route' => 'partner.dashboard', 'match' => 'partner.dashboard', 'label' => 'Tableau de bord'];
+    
     if ($user && $user->hasRole('depanneur')) {
         $links[] = ['route' => 'partner.sos.index', 'match' => 'partner.sos.*', 'label' => 'Demandes SOS'];
     }

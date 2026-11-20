@@ -146,8 +146,7 @@ class PartnerSpaceTest extends TestCase
         $this->post('/verification', ['code' => $m[1]])->assertRedirect(route('partner.dashboard'));
 
         $user = User::where('phone', '+221775556677')->firstOrFail();
-        $this->actingAs($user)->get(route('partner.dashboard'))
-            ->assertRedirect(route('partner.visits.index'));
+        $this->actingAs($user)->get(route('partner.dashboard'))->assertOk();
     }
 
     // ---------- Garage ----------

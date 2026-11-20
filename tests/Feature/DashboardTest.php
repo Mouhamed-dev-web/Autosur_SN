@@ -31,7 +31,7 @@ class DashboardTest extends TestCase
         $this->actingAs($this->client())->get(route('client.dashboard'))
             ->assertOk()
             ->assertSee('Aucune échéance dans les 30 prochains jours')
-            ->assertSee('Vous n\'avez pas encore de véhicule');
+            ->assertSee('pas encore de véhicule');
     }
 
     public function test_les_echeances_sont_affichees_avec_leur_niveau(): void

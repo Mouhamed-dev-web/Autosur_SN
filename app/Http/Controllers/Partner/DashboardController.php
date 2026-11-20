@@ -3,19 +3,17 @@
 namespace App\Http\Controllers\Partner;
 
 use App\Http\Controllers\Controller;
+use App\Services\PartnerDashboardService;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request, PartnerDashboardService $dashboard)
     {
-        $user = $request->user();
+        $partner = $request->user()->partner;
 
-        return match (true) {
-            $user->hasRole('depanneur') => redirect()->route('partner.sos.index'),
-            $user->hasRole('garage') => redirect()->route('partner.visits.index'),
-            $user->hasRole('assurance') => redirect()->route('partner.insurance.index'),
-            default => view('partner.dashboard'),
-        };
+        abort_unless($partner, 403);
+
+        return view('partner.dashboard', $dashboard->for($partner));
     }
 }
